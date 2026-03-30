@@ -47,6 +47,15 @@ public class NodeManager : MonoBehaviour {
 
         UpdateLinePosition(lr, a, b);
         connections.Add((a, b, lr));
+
+        GameManager.Instance.CheckConnections();
+    }
+
+    public bool HasConnection(GameObject a, GameObject b)
+    {
+        foreach (var (na, nb, _) in connections)
+            if ((na == a && nb == b) || (na == b && nb == a)) return true;
+        return false;
     }
 
     void UpdateLinePosition(LineRenderer lr, GameObject a, GameObject b) 
