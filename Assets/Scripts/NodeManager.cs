@@ -1,0 +1,75 @@
+using UnityEngine;
+using System.Collections.Generic;
+
+public class NodeManager : MonoBehaviour {
+    // did this logic for my game Cosmic Thread game: https://github.com/lamarjambi/cosmic-thread
+    // difference is, in CT, i drew 3D lines between them because the game is a canvas
+    public static NodeManager Instance;
+
+    private GameObject selectedNode = null;
+
+    private List<(GameObject, GameObject, LineRenderer)> connections = new();
+
+    void Awake() 
+    {
+        Instance = this;
+    }
+
+    private void SetOutline(GameObject node, bool active) 
+    {
+        Transform outline = node.transform.Find("Outline");
+        if (outline != null)
+            outline.gameObject.SetActive(active);
+    }
+
+    public void HandleNodeSelection(GameObject node) 
+    {
+        if (selectedNode == null) {
+            selectedNode = node;
+            SetOutline(node, true);
+        } else if (selectedNode == node) {
+            SetOutline(node, false);
+            selectedNode = null;
+        } else {
+            CreateConnection(selectedNode, node);
+            SetOutline(selectedNode, false);
+            selectedNode = null;
+        }
+    }
+
+    void CreateConnection(GameObject a, GameObject b) 
+    {
+        // checking for duplicates
+        foreach (var (na, nb, _) in connections)
+            if ((na == a && nb == b) || (na == b && nb == a)) return;
+
+        GameObject lineObj = new GameObject("Connection");
+        LineRenderer lr = lineObj.AddComponent<LineRenderer>();
+
+        lr.positionCount = 2;
+        lr.startWidth = 0.05f;
+        lr.endWidth = 0.05f;
+        lr.material = new Material(Shader.Find("Sprites/Default"));
+        lr.startColor = Color.white;
+        lr.endColor = Color.white;
+        lr.sortingLayerName = "Default";
+        lr.sortingOrder = 1; // render above sprites if needed
+
+        UpdateLinePosition(lr, a, b);
+        connections.Add((a, b, lr));
+    }
+
+    void UpdateLinePosition(LineRenderer lr, GameObject a, GameObject b) 
+    {
+        lr.SetPosition(0, new Vector3(a.transform.position.x, a.transform.position.y, 0));
+        lr.SetPosition(1, new Vector3(b.transform.position.x, b.transform.position.y, 0));
+    }
+
+    public void UpdateLines(GameObject movedNode) 
+    {
+        // called by drag so it moves even when the nodes are connected
+        foreach (var (a, b, lr) in connections)
+            if (a == movedNode || b == movedNode)
+                UpdateLinePosition(lr, a, b);
+    }
+}
