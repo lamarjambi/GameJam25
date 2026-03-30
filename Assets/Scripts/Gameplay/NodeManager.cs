@@ -14,25 +14,15 @@ public class NodeManager : MonoBehaviour {
     {
         Instance = this;
     }
-
-    private void SetOutline(GameObject node, bool active) 
-    {
-        Transform outline = node.transform.Find("Outline");
-        if (outline != null)
-            outline.gameObject.SetActive(active);
-    }
-
+    
     public void HandleNodeSelection(GameObject node) 
     {
         if (selectedNode == null) {
             selectedNode = node;
-            SetOutline(node, true);
         } else if (selectedNode == node) {
-            SetOutline(node, false);
             selectedNode = null;
         } else {
             CreateConnection(selectedNode, node);
-            SetOutline(selectedNode, false);
             selectedNode = null;
         }
     }
