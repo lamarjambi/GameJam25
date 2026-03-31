@@ -23,6 +23,7 @@ public class NodeManager : MonoBehaviour {
 
     void ClearConnections()
     {
+        // press Esc to cleaar the connections/lines
         foreach (var (_, _, lr) in connections)
             Destroy(lr.gameObject);
         connections.Clear();
@@ -54,8 +55,13 @@ public class NodeManager : MonoBehaviour {
         lr.startWidth = 0.05f;
         lr.endWidth = 0.05f;
         lr.material = new Material(Shader.Find("Sprites/Default"));
-        lr.startColor = Color.white;
-        lr.endColor = Color.white;
+
+        bool correct = GameManager.Instance.IsCorrectConnection(a, b);
+
+        // if it's correct connection, form the line as green, if not
+        // form white ("default")
+        lr.startColor = correct ? Color.green : Color.white;
+        lr.endColor = correct ? Color.green : Color.white;
         lr.sortingLayerName = "Default";
         lr.sortingOrder = 1; 
 

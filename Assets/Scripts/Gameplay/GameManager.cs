@@ -21,6 +21,15 @@ public class GameManager : MonoBehaviour
         Instance = this;
     }
 
+    public bool IsCorrectConnection(GameObject a, GameObject b)
+    {
+        // cross-check if connections between the nodes are correct
+        foreach (CorrectConnection correct in correctConnections)
+            if ((correct.nodeA == a && correct.nodeB == b) || (correct.nodeA == b && correct.nodeB == a))
+                return true;
+        return false;
+    }
+
     public void CheckConnections()
     {
         if (correctConnections.Count == 0) return;
