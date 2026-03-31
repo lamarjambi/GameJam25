@@ -43,7 +43,7 @@ public class NodeManager : MonoBehaviour {
         lr.startColor = Color.white;
         lr.endColor = Color.white;
         lr.sortingLayerName = "Default";
-        lr.sortingOrder = 1; // render above sprites if needed
+        lr.sortingOrder = 1; 
 
         UpdateLinePosition(lr, a, b);
         connections.Add((a, b, lr));
@@ -66,7 +66,7 @@ public class NodeManager : MonoBehaviour {
 
     public void UpdateLines(GameObject movedNode) 
     {
-        // called by drag so it moves even when the nodes are connected
+        // so nodes move even if they're connected
         foreach (var (a, b, lr) in connections)
             if (a == movedNode || b == movedNode)
                 UpdateLinePosition(lr, a, b);
