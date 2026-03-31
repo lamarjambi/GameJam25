@@ -7,6 +7,11 @@ public class RandomNodePosition : MonoBehaviour
 
     void Awake()
     {
+        Randomize();
+    }
+
+    public void Randomize()
+    {
         transform.position = new Vector3(
             Random.Range(spawnAreaMin.x, spawnAreaMax.x),
             Random.Range(spawnAreaMin.y, spawnAreaMax.y),

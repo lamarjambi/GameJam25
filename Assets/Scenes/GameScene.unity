@@ -776,11 +776,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1663488085}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1280819146 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3499588253340988625, guid: 650db64867bb9b44b95224f7a8b10828, type: 3}
-  m_PrefabInstance: {fileID: 1489954745}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1328987234 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3499588253340988625, guid: 650db64867bb9b44b95224f7a8b10828, type: 3}
@@ -1080,6 +1075,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2018903898}
   - component: {fileID: 2018903897}
+  - component: {fileID: 2018903899}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -1099,11 +1095,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98f4c0bc7948f904e8e2047144b70457, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
-  correctConnections:
-  - nodeA: {fileID: 1328987234}
-    nodeB: {fileID: 1950043407}
-  - nodeA: {fileID: 1328987234}
-    nodeB: {fileID: 1280819146}
+  rounds:
+  - correctConnections:
+    - nodeA: {fileID: 1328987234}
+      nodeB: {fileID: 1950043407}
+    timeLimit: 4
 --- !u!4 &2018903898
 Transform:
   m_ObjectHideFlags: 0
@@ -1119,6 +1115,24 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2018903899
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2018903896}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b9cb51872e2e73428edfa51f5499967, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FailureEffect
+  joshPrefab: {fileID: 5957915377163331307, guid: a225c21b2d6d5a441b2e784adbc7623f, type: 3}
+  spawnCount: 14
+  minScale: 0.5
+  maxScale: 3
+  timeBetweenSpawns: 0.2
+  displayDuration: 3
 --- !u!1 &2113488348
 GameObject:
   m_ObjectHideFlags: 0

@@ -9,22 +9,60 @@ public struct CorrectConnection
     public GameObject nodeB;
 }
 
+[Serializable]
+public struct RoundConfig
+{
+    public List<CorrectConnection> correctConnections;
+    public float timeLimit;
+}
+
 public class GameManager : MonoBehaviour
 {
-    // did this logic for my game Cosmic Thread game: https://github.com/lamarjambi/cosmic-thread
+    // did the correct connections logic for my game Cosmic Thread game: https://github.com/lamarjambi/cosmic-thread
     public static GameManager Instance;
 
-    [SerializeField] private List<CorrectConnection> correctConnections = new();
+    [SerializeField] private List<RoundConfig> rounds = new();
+
+    public int CurrentRound { get; private set; } = 0;
+
+    // Kaylie can play with these
+    public static event Action<int> OnRoundComplete; // 0, 1, 2
+    public static event Action OnGameWon;
+    public static event Action OnGameFailed;
+
+    private float timer;
+    private bool timerRunning = false;
 
     void Awake()
     {
         Instance = this;
+        StartTimer();
     }
+
+    void Update()
+    {
+        // failure when it hits zero
+        if (!timerRunning) return;
+        timer -= Time.deltaTime;
+        if (timer <= 0f)
+        {
+            timerRunning = false;
+            TriggerFailure();
+        }
+    }
+
+    void StartTimer()
+    {
+        timer = GetCurrentTimeLimit();
+        timerRunning = true;
+    }
+
+    public void RestartTimer() => StartTimer();
 
     public bool IsCorrectConnection(GameObject a, GameObject b)
     {
-        // cross-check if connections between the nodes are correct
-        foreach (CorrectConnection correct in correctConnections)
+        if (CurrentRound >= rounds.Count) return false;
+        foreach (CorrectConnection correct in rounds[CurrentRound].correctConnections)
             if ((correct.nodeA == a && correct.nodeB == b) || (correct.nodeA == b && correct.nodeB == a))
                 return true;
         return false;
@@ -32,9 +70,13 @@ public class GameManager : MonoBehaviour
 
     public void CheckConnections()
     {
-        if (correctConnections.Count == 0) return;
+        // :func: if all correct, round is over
+        if (CurrentRound >= rounds.Count) return;
+        var connections = rounds[CurrentRound].correctConnections;
+        if (connections.Count == 0) return;
 
-        foreach (CorrectConnection correct in correctConnections)
+        // runs after every linkage
+        foreach (CorrectConnection correct in connections)
         {
             if (!NodeManager.Instance.HasConnection(correct.nodeA, correct.nodeB))
                 return;
@@ -45,6 +87,35 @@ public class GameManager : MonoBehaviour
 
     void OnAllConnectionsCorrect()
     {
-        Debug.Log("all connections correct");
+        timerRunning = false;
+        OnRoundComplete?.Invoke(CurrentRound);
+        CurrentRound++;
+
+        if (CurrentRound >= rounds.Count)
+        {
+            OnGameWon?.Invoke();
+        }
+        else
+        {
+            // delay
+            Invoke(nameof(StartNextRound), 1.5f);
+        }
+    }
+
+    void StartNextRound()
+    {
+        NodeManager.Instance.ResetRound();
+        StartTimer();
+    }
+
+    public void TriggerFailure()
+    {
+        OnGameFailed?.Invoke();
+    }
+
+    public float GetCurrentTimeLimit()
+    {
+        if (CurrentRound >= rounds.Count) return 0f;
+        return rounds[CurrentRound].timeLimit;
     }
 }
