@@ -23,11 +23,18 @@ public class NodeManager : MonoBehaviour {
 
     void ClearConnections()
     {
-        // press Esc to cleaar the connections/lines
+        // press Esc to clear the connections/lines
         foreach (var (_, _, lr) in connections)
             Destroy(lr.gameObject);
         connections.Clear();
         selectedNode = null;
+    }
+
+    public void ResetRound()
+    {
+        ClearConnections();
+        foreach (var node in FindObjectsByType<RandomNodePosition>(FindObjectsSortMode.None))
+            node.Randomize();
     }
     
     public void HandleNodeSelection(GameObject node) 
