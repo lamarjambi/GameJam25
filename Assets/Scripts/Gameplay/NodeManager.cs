@@ -10,9 +10,23 @@ public class NodeManager : MonoBehaviour {
 
     private List<(GameObject, GameObject, LineRenderer)> connections = new();
 
-    void Awake() 
+    void Awake()
     {
         Instance = this;
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+            ClearConnections();
+    }
+
+    void ClearConnections()
+    {
+        foreach (var (_, _, lr) in connections)
+            Destroy(lr.gameObject);
+        connections.Clear();
+        selectedNode = null;
     }
     
     public void HandleNodeSelection(GameObject node) 
