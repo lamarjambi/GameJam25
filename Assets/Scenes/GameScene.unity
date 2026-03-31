@@ -1099,7 +1099,7 @@ MonoBehaviour:
   - correctConnections:
     - nodeA: {fileID: 1328987234}
       nodeB: {fileID: 1950043407}
-    timeLimit: 4
+    timeLimit: 6
 --- !u!4 &2018903898
 Transform:
   m_ObjectHideFlags: 0
@@ -1128,7 +1128,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FailureEffect
   joshPrefab: {fileID: 5957915377163331307, guid: a225c21b2d6d5a441b2e784adbc7623f, type: 3}
-  spawnCount: 14
+  spawnCount: 20
   minScale: 0.5
   maxScale: 3
   timeBetweenSpawns: 0.2
