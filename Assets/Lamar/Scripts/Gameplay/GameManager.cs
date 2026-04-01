@@ -34,6 +34,9 @@ public class GameManager : MonoBehaviour
 
     private float timer;
     private bool timerRunning = false;
+    
+    private int resetCount = 0;
+
 
     [Header("Round Sequence")]
     private int roundID = 0;
@@ -64,6 +67,11 @@ public class GameManager : MonoBehaviour
         {
             timerRunning = false;
             TriggerFailure();
+        }
+
+        if (resetCount >= 3)
+        {
+            SceneManager.LoadScene("GameOver");
         }
     }
 
@@ -133,6 +141,9 @@ public class GameManager : MonoBehaviour
     {
         IsLocked = true;
         OnGameFailed?.Invoke();
+
+        resetCount++;
+        Debug.Log("reset count: " + resetCount);
     }
 
     public static void Unlock()
