@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 2041850928680522168}
   - component: {fileID: 5001821626712488553}
   m_Layer: 0
-  m_Name: GreenPrefab
+  m_Name: GreenNode
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

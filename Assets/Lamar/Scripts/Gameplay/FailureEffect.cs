@@ -48,6 +48,7 @@ public class FailureEffect : MonoBehaviour
         spawnedJoshes.Clear();
 
         NodeManager.Instance.ResetRound();
+        GameManager.Unlock();
         GameManager.Instance.RestartTimer();
     }
 }
