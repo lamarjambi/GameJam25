@@ -467,7 +467,7 @@ MonoBehaviour:
   zoomSpeed: 5
   pinchZoomSpeed: 0.1
   minZoom: 2
-  maxZoom: 20
+  maxZoom: 15
   backgroundParent: {fileID: 1663488085}
 --- !u!1 &63979546
 GameObject:
