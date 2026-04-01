@@ -119,6 +119,11 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &44220918 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3499588253340988625, guid: 650db64867bb9b44b95224f7a8b10828, type: 3}
+  m_PrefabInstance: {fileID: 1489954745}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &53387643
 GameObject:
   m_ObjectHideFlags: 0
@@ -1099,7 +1104,11 @@ MonoBehaviour:
   - correctConnections:
     - nodeA: {fileID: 1328987234}
       nodeB: {fileID: 1950043407}
-    timeLimit: 6
+    timeLimit: 12
+  - correctConnections:
+    - nodeA: {fileID: 1328987234}
+      nodeB: {fileID: 44220918}
+    timeLimit: 8
 --- !u!4 &2018903898
 Transform:
   m_ObjectHideFlags: 0
