@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 [Serializable]
 public struct CorrectConnection
@@ -20,6 +21,7 @@ public class GameManager : MonoBehaviour
 {
     // did the correct connections logic for my game Cosmic Thread game: https://github.com/lamarjambi/cosmic-thread
     public static GameManager Instance;
+    public static bool IsLocked { get; private set; } = false;
 
     [SerializeField] private List<RoundConfig> rounds = new();
 
@@ -32,11 +34,28 @@ public class GameManager : MonoBehaviour
 
     private float timer;
     private bool timerRunning = false;
+    
+    private int resetCount = 0;
+
+
+    [Header("Round Sequence")]
+    private int roundID = 0;
+    [SerializeField] private GameObject round1;
+    [SerializeField] private GameObject round2;
+    [SerializeField] private GameObject round3;
 
     void Awake()
     {
         Instance = this;
         StartTimer();
+    }
+
+    void Start()
+    {
+        round1.SetActive(false);
+        round2.SetActive(false);
+        round3.SetActive(false);
+        RoundSequence();
     }
 
     void Update()
@@ -48,6 +67,11 @@ public class GameManager : MonoBehaviour
         {
             timerRunning = false;
             TriggerFailure();
+        }
+
+        if (resetCount >= 3)
+        {
+            SceneManager.LoadScene("GameOver");
         }
     }
 
@@ -62,6 +86,7 @@ public class GameManager : MonoBehaviour
     public bool IsCorrectConnection(GameObject a, GameObject b)
     {
         if (CurrentRound >= rounds.Count) return false;
+
         foreach (CorrectConnection correct in rounds[CurrentRound].correctConnections)
             if ((correct.nodeA == a && correct.nodeB == b) || (correct.nodeA == b && correct.nodeB == a))
                 return true;
@@ -94,6 +119,7 @@ public class GameManager : MonoBehaviour
         if (CurrentRound >= rounds.Count)
         {
             OnGameWon?.Invoke();
+            Invoke(nameof(LoadWinScene), 1.5f);
         }
         else
         {
@@ -102,20 +128,55 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    void LoadWinScene() => SceneManager.LoadScene("Win");
+
     void StartNextRound()
     {
         NodeManager.Instance.ResetRound();
+        RoundSequence();
         StartTimer();
     }
 
     public void TriggerFailure()
     {
+        IsLocked = true;
         OnGameFailed?.Invoke();
+
+        resetCount++;
+        Debug.Log("reset count: " + resetCount);
+    }
+
+    public static void Unlock()
+    {
+        IsLocked = false;
     }
 
     public float GetCurrentTimeLimit()
     {
         if (CurrentRound >= rounds.Count) return 0f;
         return rounds[CurrentRound].timeLimit;
+    }
+
+    public void RoundSequence()
+    {   
+        // nodes invisible by default
+        switch (roundID)
+        {
+            case 0:
+                round1.SetActive(true);
+                roundID++;
+                break;
+
+            case 1:
+                Destroy(round1);
+                round2.SetActive(true);
+                roundID++;
+                break;
+
+            case 2:
+                Destroy(round2);
+                round3.SetActive(true);
+                break;
+        }
     }
 }

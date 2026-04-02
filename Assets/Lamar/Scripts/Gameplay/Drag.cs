@@ -16,6 +16,7 @@ public class Drag : MonoBehaviour {
     }
 
     private void OnMouseDown() {
+        if (GameManager.IsLocked) return;
         if (Input.GetKey(KeyCode.LeftShift)) {
             // if shift is pressed when a node is clicked, then connect them
             NodeManager.Instance.HandleNodeSelection(gameObject);
