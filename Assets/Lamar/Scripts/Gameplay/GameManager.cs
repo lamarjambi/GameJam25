@@ -79,6 +79,17 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
+        // red overlay gets worse
+        if (dangerOverlay != null)
+        {
+            if (resetCount > 0)
+            {
+                dangerOverlay.gameObject.SetActive(true);
+                float alpha = resetCount / 3f * 0.6f;
+                dangerOverlay.color = new Color(1f, 0f, 0f, alpha);
+            }
+        }
+
         // failure when it hits zero
         if (!timerRunning) return;
         timer -= Time.deltaTime;
@@ -88,19 +99,18 @@ public class GameManager : MonoBehaviour
             activeTimerText.text = string.Format("{0:00}:{1:00}", seconds / 60, seconds % 60);
         }
 
-        // red overlay
-        if (dangerOverlay != null)
-        {
-            float timeLimit = GetCurrentTimeLimit();
-            float threshold = timeLimit * dangerThreshold;
-            if (timer < threshold)
-            {
-                if (!dangerOverlay.gameObject.activeSelf)
-                    dangerOverlay.gameObject.SetActive(true);
-                float alpha = Mathf.InverseLerp(threshold, 0f, timer);
-                dangerOverlay.color = new Color(1f, 0f, 0f, alpha * 0.6f);
-            }
-        }
+        // if (dangerOverlay != null)
+        // {
+        //     float timeLimit = GetCurrentTimeLimit();
+        //     float threshold = timeLimit * dangerThreshold;
+        //     if (timer < threshold)
+        //     {
+        //         if (!dangerOverlay.gameObject.activeSelf)
+        //             dangerOverlay.gameObject.SetActive(true);
+        //         float alpha = Mathf.InverseLerp(threshold, 0f, timer);
+        //         dangerOverlay.color = new Color(1f, 0f, 0f, alpha * 0.6f);
+        //     }
+        // }
 
         if (timer <= 0f)
         {
@@ -118,7 +128,6 @@ public class GameManager : MonoBehaviour
     {
         timer = GetCurrentTimeLimit();
         timerRunning = true;
-        dangerOverlay?.gameObject.SetActive(false);
     }
 
     public void RestartTimer() => StartTimer();
