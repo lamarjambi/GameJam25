@@ -10,6 +10,7 @@ public class FailureEffect : MonoBehaviour
     [SerializeField] private float maxScale = 3f;
     [SerializeField] private float timeBetweenSpawns = 0.2f;
     [SerializeField] private float displayDuration = 2f;
+    [SerializeField] private AudioSource whistleSource;
 
     private List<GameObject> spawnedJoshes = new();
 
@@ -33,6 +34,9 @@ public class FailureEffect : MonoBehaviour
             GameObject josh = Instantiate(joshPrefab, worldPos, Quaternion.identity);
             josh.transform.localScale = Vector3.one * Random.Range(minScale, maxScale);
             spawnedJoshes.Add(josh);
+
+            if (whistleSource != null)
+                whistleSource.PlayOneShot(whistleSource.clip);
 
             yield return new WaitForSeconds(timeBetweenSpawns);
         }

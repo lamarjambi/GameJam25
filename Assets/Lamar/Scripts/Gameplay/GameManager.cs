@@ -54,8 +54,10 @@ public class GameManager : MonoBehaviour
 
     [Header("Danger Overlay")]
     [SerializeField] private Image dangerOverlay;
-    [Range(0f, 1f)]
-    [SerializeField] private float dangerThreshold = 0.4f; // red effect starts after
+
+    [Header("Sound")]
+    public AudioSource audioSource;
+    public AudioClip menuMusic;
 
     void Awake()
     {
@@ -75,6 +77,15 @@ public class GameManager : MonoBehaviour
         timer3.SetActive(false);
 
         RoundSequence();
+
+        // sound
+        if (audioSource != null && menuMusic != null)
+        {
+            audioSource.clip = menuMusic;
+            audioSource.loop = true;
+            audioSource.volume = 0.5f;
+            audioSource.Play();
+        }
     }
 
     void Update()
