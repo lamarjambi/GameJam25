@@ -22,6 +22,7 @@ public class CameraController : MonoBehaviour
 
     void Update()
     {
+        if (GameManager.IsLocked) return;
         if (Input.GetMouseButtonDown(1))
         {
             lastMousePosition = Input.mousePosition;

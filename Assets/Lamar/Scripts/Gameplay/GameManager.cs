@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 [Serializable]
 public struct CorrectConnection
@@ -20,6 +23,7 @@ public class GameManager : MonoBehaviour
 {
     // did the correct connections logic for my game Cosmic Thread game: https://github.com/lamarjambi/cosmic-thread
     public static GameManager Instance;
+    public static bool IsLocked { get; private set; } = false;
 
     [SerializeField] private List<RoundConfig> rounds = new();
 
@@ -32,11 +36,45 @@ public class GameManager : MonoBehaviour
 
     private float timer;
     private bool timerRunning = false;
+    
+    private int resetCount = 0;
+
+
+    [Header("Round Sequence")]
+    private int roundID = 0;
+    [SerializeField] private GameObject round1;
+    [SerializeField] private GameObject round2;
+    [SerializeField] private GameObject round3;
+
+    [Header("Timers")]
+    [SerializeField] private GameObject timer1;
+    [SerializeField] private GameObject timer2;
+    [SerializeField] private GameObject timer3;
+    private TMP_Text activeTimerText;
+
+    [Header("Danger Overlay")]
+    [SerializeField] private Image dangerOverlay;
+    [Range(0f, 1f)]
+    [SerializeField] private float dangerThreshold = 0.4f; // red effect starts after
 
     void Awake()
     {
         Instance = this;
+        IsLocked = false;
         StartTimer();
+    }
+
+    void Start()
+    {
+        round1.SetActive(false);
+        round2.SetActive(false);
+        round3.SetActive(false);
+
+        timer1.SetActive(false);
+        timer2.SetActive(false);
+        timer3.SetActive(false);
+
+        RoundSequence();
     }
 
     void Update()
@@ -44,10 +82,35 @@ public class GameManager : MonoBehaviour
         // failure when it hits zero
         if (!timerRunning) return;
         timer -= Time.deltaTime;
+        if (activeTimerText != null)
+        {
+            int seconds = Mathf.CeilToInt(timer);
+            activeTimerText.text = string.Format("{0:00}:{1:00}", seconds / 60, seconds % 60);
+        }
+
+        // red overlay
+        if (dangerOverlay != null)
+        {
+            float timeLimit = GetCurrentTimeLimit();
+            float threshold = timeLimit * dangerThreshold;
+            if (timer < threshold)
+            {
+                if (!dangerOverlay.gameObject.activeSelf)
+                    dangerOverlay.gameObject.SetActive(true);
+                float alpha = Mathf.InverseLerp(threshold, 0f, timer);
+                dangerOverlay.color = new Color(1f, 0f, 0f, alpha * 0.6f);
+            }
+        }
+
         if (timer <= 0f)
         {
             timerRunning = false;
             TriggerFailure();
+        }
+
+        if (resetCount >= 3)
+        {
+            SceneManager.LoadScene("GameOver");
         }
     }
 
@@ -55,6 +118,7 @@ public class GameManager : MonoBehaviour
     {
         timer = GetCurrentTimeLimit();
         timerRunning = true;
+        dangerOverlay?.gameObject.SetActive(false);
     }
 
     public void RestartTimer() => StartTimer();
@@ -62,6 +126,7 @@ public class GameManager : MonoBehaviour
     public bool IsCorrectConnection(GameObject a, GameObject b)
     {
         if (CurrentRound >= rounds.Count) return false;
+
         foreach (CorrectConnection correct in rounds[CurrentRound].correctConnections)
             if ((correct.nodeA == a && correct.nodeB == b) || (correct.nodeA == b && correct.nodeB == a))
                 return true;
@@ -94,6 +159,7 @@ public class GameManager : MonoBehaviour
         if (CurrentRound >= rounds.Count)
         {
             OnGameWon?.Invoke();
+            Invoke(nameof(LoadWinScene), 1.5f);
         }
         else
         {
@@ -102,20 +168,67 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    void LoadWinScene() => SceneManager.LoadScene("Win");
+
     void StartNextRound()
     {
         NodeManager.Instance.ResetRound();
+        RoundSequence();
         StartTimer();
     }
 
     public void TriggerFailure()
     {
+        IsLocked = true;
         OnGameFailed?.Invoke();
+
+        resetCount++;
+        Debug.Log("reset count: " + resetCount);
+    }
+
+    public static void Unlock()
+    {
+        IsLocked = false;
     }
 
     public float GetCurrentTimeLimit()
     {
         if (CurrentRound >= rounds.Count) return 0f;
         return rounds[CurrentRound].timeLimit;
+    }
+
+    public void RoundSequence()
+    {   
+        // nodes invisible by default
+        switch (roundID)
+        {
+            case 0:
+                round1.SetActive(true);
+                timer1.SetActive(true);
+                activeTimerText = timer1.GetComponentInChildren<TMP_Text>();
+                roundID++;
+                break;
+
+            case 1:
+                Destroy(round1);
+                Destroy(timer1);
+
+                round2.SetActive(true);
+                timer2.SetActive(true);
+                activeTimerText = timer2.GetComponentInChildren<TMP_Text>();
+
+                roundID++;
+                break;
+
+            case 2:
+                Destroy(round2);
+                Destroy(timer2);
+
+                round3.SetActive(true);
+                timer3.SetActive(true);
+                activeTimerText = timer3.GetComponentInChildren<TMP_Text>();
+
+                break;
+        }
     }
 }
