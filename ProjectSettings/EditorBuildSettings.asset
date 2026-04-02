@@ -9,7 +9,7 @@ EditorBuildSettings:
     path: Assets/Kaylie/Scenes/MainMenu.unity
     guid: a1ad5b41a76474a75967948ac94678f9
   - enabled: 1
-    path: Assets/Scenes/GameScene.unity
+    path: Assets/Lamar/Scenes/GameScene.unity
     guid: 1350c1a3bf1bbb94085f51020dbe6314
   - enabled: 1
     path: Assets/Kaylie/Scenes/GameOver.unity
@@ -17,6 +17,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Kaylie/Scenes/Win.unity
     guid: 00adca813a59048dc952b88cc312bb38
+  - enabled: 1
+    path: Assets/Kaylie/Scenes/Tutorial.unity
+    guid: 9e021b5a0186c4d4a9e4411b8d5d6931
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
