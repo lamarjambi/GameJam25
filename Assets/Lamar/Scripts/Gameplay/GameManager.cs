@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -44,9 +45,16 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject round2;
     [SerializeField] private GameObject round3;
 
+    [Header("Timers")]
+    [SerializeField] private GameObject timer1;
+    [SerializeField] private GameObject timer2;
+    [SerializeField] private GameObject timer3;
+    private TMP_Text activeTimerText;
+
     void Awake()
     {
         Instance = this;
+        IsLocked = false;
         StartTimer();
     }
 
@@ -55,6 +63,11 @@ public class GameManager : MonoBehaviour
         round1.SetActive(false);
         round2.SetActive(false);
         round3.SetActive(false);
+
+        timer1.SetActive(false);
+        timer2.SetActive(false);
+        timer3.SetActive(false);
+
         RoundSequence();
     }
 
@@ -63,6 +76,11 @@ public class GameManager : MonoBehaviour
         // failure when it hits zero
         if (!timerRunning) return;
         timer -= Time.deltaTime;
+        if (activeTimerText != null)
+        {
+            int seconds = Mathf.CeilToInt(timer);
+            activeTimerText.text = string.Format("{0:00}:{1:00}", seconds / 60, seconds % 60);
+        }
         if (timer <= 0f)
         {
             timerRunning = false;
@@ -164,18 +182,30 @@ public class GameManager : MonoBehaviour
         {
             case 0:
                 round1.SetActive(true);
+                timer1.SetActive(true);
+                activeTimerText = timer1.GetComponentInChildren<TMP_Text>();
                 roundID++;
                 break;
 
             case 1:
                 Destroy(round1);
+                Destroy(timer1);
+
                 round2.SetActive(true);
+                timer2.SetActive(true);
+                activeTimerText = timer2.GetComponentInChildren<TMP_Text>();
+
                 roundID++;
                 break;
 
             case 2:
                 Destroy(round2);
+                Destroy(timer2);
+
                 round3.SetActive(true);
+                timer3.SetActive(true);
+                activeTimerText = timer3.GetComponentInChildren<TMP_Text>();
+
                 break;
         }
     }
