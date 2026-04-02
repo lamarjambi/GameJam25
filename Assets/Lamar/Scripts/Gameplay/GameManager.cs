@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 [Serializable]
 public struct CorrectConnection
@@ -51,6 +52,11 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject timer3;
     private TMP_Text activeTimerText;
 
+    [Header("Danger Overlay")]
+    [SerializeField] private Image dangerOverlay;
+    [Range(0f, 1f)]
+    [SerializeField] private float dangerThreshold = 0.4f; // red effect starts after
+
     void Awake()
     {
         Instance = this;
@@ -81,6 +87,19 @@ public class GameManager : MonoBehaviour
             int seconds = Mathf.CeilToInt(timer);
             activeTimerText.text = string.Format("{0:00}:{1:00}", seconds / 60, seconds % 60);
         }
+        if (dangerOverlay != null)
+        {
+            float timeLimit = GetCurrentTimeLimit();
+            float threshold = timeLimit * dangerThreshold;
+            if (timer < threshold)
+            {
+                if (!dangerOverlay.gameObject.activeSelf)
+                    dangerOverlay.gameObject.SetActive(true);
+                float alpha = Mathf.InverseLerp(threshold, 0f, timer);
+                dangerOverlay.color = new Color(1f, 0f, 0f, alpha * 0.6f);
+            }
+        }
+
         if (timer <= 0f)
         {
             timerRunning = false;
@@ -97,6 +116,7 @@ public class GameManager : MonoBehaviour
     {
         timer = GetCurrentTimeLimit();
         timerRunning = true;
+        dangerOverlay?.gameObject.SetActive(false);
     }
 
     public void RestartTimer() => StartTimer();
