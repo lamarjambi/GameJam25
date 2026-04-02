@@ -47,6 +47,7 @@ public class GameManager : MonoBehaviour
     void Awake()
     {
         Instance = this;
+        IsLocked = false;
         StartTimer();
     }
 
