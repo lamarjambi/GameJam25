@@ -87,6 +87,8 @@ public class GameManager : MonoBehaviour
             int seconds = Mathf.CeilToInt(timer);
             activeTimerText.text = string.Format("{0:00}:{1:00}", seconds / 60, seconds % 60);
         }
+
+        // red overlay
         if (dangerOverlay != null)
         {
             float timeLimit = GetCurrentTimeLimit();
